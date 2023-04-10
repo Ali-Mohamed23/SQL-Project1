@@ -7,13 +7,13 @@ Answer the following questions and provide the SQL queries used to find the answ
 SQL Queries: 
 
 select                                      
-a.country,                          -- Select the countries
-a.city,                             -- Select the city
-Sum(al.revenue) AS City_Revenue     -- Get the sum of the revenue from the analytics table
-from analytics al                   -- Identify table
-join all_sessions a                 -- JOIN the all_sessions table 
-on al.visitid=a.visitid             -- Identify how tables are related through visitID
-where al.units_sold >= 1            -- Only show values where there was revenues
+a.country,                                     -- Select the countries
+a.city,                                        -- Select the city
+Sum(al.revenue) AS City_Revenue                -- Get the sum of the revenue from the analytics table
+from analytics al                              -- Identify table
+join all_sessions a                            -- JOIN the all_sessions table 
+on al.visitid=a.visitid                        -- Identify how tables are related through visitID
+where al.units_sold >= 1                       -- Only show values where there was revenues
 And a.transactions is not null      -- Make sure there is transaction that occured 
 group by a.country, a.city          -- Sort these SUM of revenues by the country and city 
 order by City_Revenue Desc          -- Show the highest revenues first 
@@ -102,9 +102,37 @@ Answer:: I moved around the order by to look for patterns, 1220 rows, - USA, Mou
 
 SQL Queries:
 
+SELECT 
+p.name,  									  -- Selects the names from products table
+country, 									  -- Selects the country from all_sessions table
+city,					    				  -- Selects city from all_sessions table 
+SUM(total_ordered) AS total_quantity_ordered       -- This adds all of the total ordered from sales_report table 
+	FROM all_sessions AS a						-- Select all_sessions table to collect columns
+JOIN products as p								-- Add the products table 
+on a.productsku=p.sku 							-- Explains how all_sessions and products are related
+JOIN sales_by_sku as s							-- Add the sales_by_sku table 
+on s.sku=a.productsku							-- Shows how all_sessions and sales_by_sku are related
+     WHERE (
+         name IS NOT NULL   					-- Must have a product name to include in search
+AND country IS NOT NULL							-- Must have a country 
+AND city IS NOT NULL							-- Must have a city
+AND total_ordered IS NOT NULL 					-- Total_ordered must not be empty
+AND total_ordered != 0  						-- Only collect information from rows with orders
+)
+AND
+(name != 'not available in demo dataset' and name!='(not set)'
+AND country != 'not available in demo dataset' and country!='(not set)'
+AND city != 'not available in demo dataset' and city!='(not set)'
+AND p.sku!= 'not available in demo dataset' and p.sku!= '(not set)'
+)     					--  THIS will not include citys and countries with no information 
+
+GROUP BY country, city, name         				 -— This will take the sum of orders from each country, city, and by each name of product
+ORDER BY total_quantity_ordered desc  				 -- Displays the highest order quantitys first
 
 
-Answer:
+
+
+Answer: Indoor cameras are the top selling product in Mountain View, USA. The pattern we notice is that most products sold are in the same city Mountain view, USA
 
 
 
@@ -114,10 +142,19 @@ Answer:
 
 SQL Queries:
 
+SELECT country, city, SUM(al.revenue) as City_revenue
+FROM all_sessions
+JOIN products as p 
+on p.sku = productsku
+JOIN analytics as al 
+ON all_sessions.fullvisitorid = al.fullvisitorid
+JOIN sales_report as sl 
+ON all_sessions.productsku = sl.productsku
+WHERE revenue is not null
+GROUP BY country, city
 
 
-Answer:
-
+Answer: 24 rows of countries, and cities that produce revenue with this query. Mountain view has generated the most revenue at $9225.** the revenue column has been divided by 1,000,000
 
 
 
