@@ -6,18 +6,29 @@ Answer the following questions and provide the SQL queries used to find the answ
 
 SQL Queries: 
 
+```SQL
 select                                      
 a.country,                                     -- Select the countries
+
 a.city,                                        -- Select the city
+
 Sum(al.revenue) AS City_Revenue                -- Get the sum of the revenue from the analytics table
+
 from analytics al                              -- Identify table
+
 join all_sessions a                            -- JOIN the all_sessions table 
+
 on al.visitid=a.visitid                        -- Identify how tables are related through visitID
+
 where al.units_sold >= 1                       -- Only show values where there was revenues
-And a.transactions is not null      -- Make sure there is transaction that occured 
+
+And a.transactions is not null      -- Make sure there is transaction that occured
+
 group by a.country, a.city          -- Sort these SUM of revenues by the country and city 
+
 order by City_Revenue Desc          -- Show the highest revenues first 
 
+```
 
 
 
@@ -30,7 +41,7 @@ Answer: All transaction revenues were in the United States (Sunnyvale $666, Seat
 
 
 SQL Queries: 
-
+```SQL
 SELECT  
 country,
 city,
@@ -48,7 +59,7 @@ AND city != 'not available in demo dataset' and city!='(not set)'               
 )
 GROUP BY country, city                                                          -- Calculate average orders by country and city 
 ORDER BY average_quantity_ordered desc, country, city                            -- Display them with average order quantity first
-
+```
 
 
 
@@ -63,7 +74,7 @@ may not be many orders.
 
 
 SQL Queries: 
-
+```SQL
 SELECT 
 country, 
 city, 
@@ -73,7 +84,7 @@ FROM all_sessions
 JOIN sales_report                                           -- Join sales report table 
 ON all_sessions.productsku = sales_report.productsku        -- Connect relation with sales report table 
 
-WHERE (                                                     -- For the where remove null or not set values for city and country 
+WHERE (                                   -- For the where remove null or not set values for city and country 
 country IS NOT NULL
 AND city IS NOT NULL
 AND sales_report.productsku IS NOT NULL
@@ -84,10 +95,10 @@ AND city != 'not available in demo dataset' and city!='(not set)'
 AND v2productcategory != '(not set)'                        -- Do not include any product categories that are not set
 )
 
-GROUP BY all_sessions.v2productcategory, country, city     -- Sum of orders is based on categories in each city or country 
+GROUP BY all_sessions.v2productcategory, country, city -- Sum of orders is based on categories in each city or country 
 
 order by country, total_ordered_sum desc, v2productcategory   -- Display in order by countries
-
+```
 
 
 
@@ -101,7 +112,7 @@ Answer:: I moved around the order by to look for patterns, 1220 rows, - USA, Mou
 
 
 SQL Queries:
-
+```SQL
 SELECT 
 p.name,  									  -- Selects the names from products table
 country, 									  -- Selects the country from all_sessions table
@@ -126,9 +137,9 @@ AND city != 'not available in demo dataset' and city!='(not set)'
 AND p.sku!= 'not available in demo dataset' and p.sku!= '(not set)'
 )     					--  THIS will not include citys and countries with no information 
 
-GROUP BY country, city, name         				 -— This will take the sum of orders from each country, city, and by each name of product
+GROUP BY country, city, name   --This will take the sum of orders from each country, city, and by each name of product
 ORDER BY total_quantity_ordered desc  				 -- Displays the highest order quantitys first
-
+```
 
 
 
@@ -141,18 +152,21 @@ Answer: Indoor cameras are the top selling product in Mountain View, USA. The pa
 **Question 5: Can we summarize the impact of revenue generated from each city/country?**
 
 SQL Queries:
-
-SELECT country, city, SUM(al.revenue) as City_revenue
+```SQL
+SELECT 
+country, 
+city, 
+SUM(al.revenue) as City_revenue         --THis sums up the revenue column in analytics               
 FROM all_sessions
-JOIN products as p 
-on p.sku = productsku
-JOIN analytics as al 
-ON all_sessions.fullvisitorid = al.fullvisitorid
-JOIN sales_report as sl 
-ON all_sessions.productsku = sl.productsku
-WHERE revenue is not null
-GROUP BY country, city
-
+JOIN products as p                      -- Joins products table
+on p.sku = productsku                   -- Relation to products table from all_sessions
+JOIN analytics as al                    -- Joins analytics table
+ON all_sessions.fullvisitorid = al.fullvisitorid        --- Relation to analytics table
+JOIN sales_report as sl                         -- Joins sales_report table 
+ON all_sessions.productsku = sl.productsku       -- Relation to sales report table 
+WHERE revenue is not null                       -- Must have revenue to be in table 
+GROUP BY country, city                          -- Sum them up by their country and city 
+```
 
 Answer: 24 rows of countries, and cities that produce revenue with this query. Mountain view has generated the most revenue at $9225.** the revenue column has been divided by 1,000,000
 
