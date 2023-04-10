@@ -155,20 +155,26 @@ SQL Queries:
 ```SQL
 SELECT 
 country, 
-city, 
-SUM(al.revenue) as City_revenue         --THis sums up the revenue column in analytics               
+SUM(al.revenue) as Country_revenue         --THis sums up the revenue column in analytics               
 FROM all_sessions
-JOIN products as p                      -- Joins products table
-on p.sku = productsku                   -- Relation to products table from all_sessions
 JOIN analytics as al                    -- Joins analytics table
 ON all_sessions.fullvisitorid = al.fullvisitorid        --- Relation to analytics table
-JOIN sales_report as sl                         -- Joins sales_report table 
-ON all_sessions.productsku = sl.productsku       -- Relation to sales report table 
 WHERE revenue is not null                       -- Must have revenue to be in table 
-GROUP BY country, city                          -- Sum them up by their country and city 
+GROUP BY country;                        -- Sum them up by their country and city 
+
+SELECT 
+city, 
+SUM(al.revenue) as City_revenue                         --This sums up the revenue column in analytics               
+FROM all_sessions
+JOIN analytics as al                                    -- Joins analytics table
+ON all_sessions.fullvisitorid = al.fullvisitorid        --- Relation to analytics table
+WHERE revenue is not null                               -- Must have revenue to be in table 
+GROUP BY city                                           -- Sum them up by their city 
 ```
 
-Answer: 24 rows of countries, and cities that produce revenue with this query. Mountain view has generated the most revenue at $9225.** the revenue column has been divided by 1,000,000
+
+
+Answer: 24 rows of countries, and cities that produce revenue with this query. The country with the most revenue was the United States which $111,193 in revenue. Also, $80,452 of revenue with no city listed.   ** the revenue column has been divided by 1,000,000.
 
 
 

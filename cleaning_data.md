@@ -6,8 +6,6 @@ What issues will you address by cleaning the data?
 
 
 
-
-
 Queries:
 
 Query: To alter product price column so that it is divided by 1 million.
@@ -23,18 +21,18 @@ ALTER COLUMN revenue
 TYPE double precision USING revenue/1000000
 ```
 
-Query: To find duplicate rows. 
+Query: To delete duplicate rows. 
 
 ```SQL
-SELECT fullvisitorid, COUNT(*) as count 
-FROM all_sessions
-GROUP BY fullvisitorid
-HAVING COUNT(*) > 1;
+CREATE TABLE new_analytics AS
+SELECT DISTINCT * FROM analytics;
 
-SELECT COUNT(*) FROM all_sessions WHERE fullvisitorid IS NULL
+DROP TABLE analytics;
+
+ALTER TABLE new_analytics RENAME TO analytics;
 ```
 
-Answer: no null
+
 
 Query: Check the usefulness of the totaltransaction column. 
 ```SQL
@@ -69,12 +67,13 @@ Alter Table all_sessions
 DROP COLUMN itemquantity 
 ```
 
-Query:
+Query: Delete unneccesary columns
+
 ```SQL
 select itemquantity from all_sessions
 where itemquantity is not null
 ```
-Answer: The answer is all null so this column can get deleted
+Answer: The answer is all null values so these columns can get deleted
 
 Query: Delete itemquantity and itemrevenue
 ```SQL
