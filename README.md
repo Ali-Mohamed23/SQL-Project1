@@ -1,7 +1,10 @@
 # Final-Project-Transforming-and-Analyzing-Data-with-SQL
 
 ## Project/Goals
-(fill in your description and goals here)
+My goals for this project is to utilize the skills I have learned in week 1 so that I can extract, load, and transform the provided database. Furthermore, perform queries to answer questions. Lastly, perform quality assurance to validate these SQL queries. 
+
+![alt text](pngtree-matrix-digital.jpeg)
+
 
 ## Process
 ### (your step 1)
